@@ -16,7 +16,7 @@ class StockExchange:
         self.total_shares_bought = 0
         self.share_price_increase_probability = None  # Probability of share price increase
         self.share_price_decrease_probability = None  # Probability of share price decrease
-        self.update_frequency = 10  # Update frequency in seconds
+        self.update_frequency = 1  # Update frequency in seconds
         self.price_broadcast_frequency = 60  # Share price broadcast frequency in seconds
 
         self.data_queue = Queue()
@@ -37,16 +37,14 @@ class StockExchange:
         while True:
             # Emit share price update every minute
             if time.time() % self.price_broadcast_frequency == 0:
-                # print(f"{self.symbol}: Broadcasting share price - ${self.share_price}")
-                self.data_queue.put(StockExchangeEmitTypeDTO(
+                print(f"{self.symbol}: Broadcasting share price - ${self.share_price}")
+                self.data_queue.put(BroadcastingSharePriceDTO(
                     symbol=self.symbol,
-                    share_price=self.share_price,
-                    total_shares_sold=self.total_shares_sold,
-                    total_shares_bought=self.total_shares_bought
-                ))
+                    share_price=self.share_price)
+                )
 
             # Generate random share sales or purchases every second
-            share_change = random.randint(1, 1000)
+            share_change = int(random.uniform(1, 1000))
             if random.random() < 0.5:
                 self.total_shares_sold += share_change
             else:
@@ -59,6 +57,12 @@ class StockExchange:
             #       f"Total shares sold - {self.total_shares_sold}, "
             #       f"Total shares bought - {self.total_shares_bought}")
 
+            self.data_queue.put(StockExchangeEmitTypeDTO(
+                symbol=self.symbol,
+                share_price=self.share_price,
+                total_shares_sold=self.total_shares_sold,
+                total_shares_bought=self.total_shares_bought
+            ))
             time.sleep(self.update_frequency)
 
     def get_data_from_queue(self):

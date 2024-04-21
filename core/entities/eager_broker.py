@@ -1,5 +1,3 @@
-from multiprocessing import Process, Queue
-
 class EagerBroker:
     def __init__(self, name):
         self.name = name
@@ -17,7 +15,6 @@ class EagerBroker:
             data_queue.put(data)
 
     def make_decision(self, data):
-        # Implement buy/sell decision-making algorithm
         total_shares_sold, total_shares_bought, share_price = data
 
         # Decide whether to buy or sell based on the algorithm
