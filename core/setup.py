@@ -7,7 +7,7 @@ def setup_stock_exchanges():
     return stock_exchange1, stock_exchange2
 
 def setup_eager_broker():
-    eager_broker = EagerBroker("EagerBroker")
+    eager_broker = EagerBroker("EagerBroker AMZA and APLE")
     eager_broker.subscribe_to_stock_exchange(se.stock_exchange1)
     eager_broker.subscribe_to_stock_exchange(se.stock_exchange2)
     return eager_broker
