@@ -1,11 +1,8 @@
-# eager_broker.py
-
-from multiprocessing import Queue
+from multiprocessing import Process, Queue
 
 class EagerBroker:
     def __init__(self, name):
         self.name = name
-        self.stock_exchanges = []
         self.data_queues = []
 
     def subscribe_to_stock_exchange(self, stock_exchange):
@@ -24,13 +21,17 @@ class EagerBroker:
         total_shares_sold, total_shares_bought, share_price = data
 
         # Decide whether to buy or sell based on the algorithm
+        decision = ""
         if total_shares_sold > 2000 and share_price < 0.9 * share_price:
-            return "buy"
+            decision = "buy"
         elif total_shares_bought > 2000 and share_price > 1.1 * share_price:
-            return "sell"
+            decision = "sell"
         else:
-            return "hold"
+            decision = "hold"
 
-    def start(self):
-        # Start the Eager Broker process
-        pass
+        # Create a tuple containing the decision and the original data
+        decision_data = (decision, data)
+
+        # Put the decision data into the data queue
+        for data_queue in self.data_queues:
+            data_queue.put(decision_data)
