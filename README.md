@@ -5,7 +5,7 @@ This project implements the Eager Broker, a system for making buy/sell decisions
 ## Project Structure
 
 The project structure is organized as follows:
-eager_broker/
+```
 │
 ├── core/
 │ ├── init.py
@@ -32,6 +32,7 @@ eager_broker/
 │ └── visualization.py
 │
 └── main.py
+```
 
 ## Decomposition Steps
 
@@ -55,9 +56,7 @@ python main.py
 
 # Dependencies
 
+```
 Python 3.x
 Plotly (if visualization is enabled)
-
-```
-
 ```
