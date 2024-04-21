@@ -22,10 +22,9 @@ app.layout = html.Div([
     Output("alerts", "children"),
     Input("interval", "n_intervals"))
 def update_candlestick_charts(n):
-    # Replace with real-time data retrieval from StockExchange
-    # For demonstration, generate random data
-    data_amzn = generate_random_candlestick_data("AMZN")
-    data_aapl = generate_random_candlestick_data("AAPL")
+    # Retrieve real-time data from StockExchange instances
+    data_amzn = fetch_real_time_data("AMZN")
+    data_aapl = fetch_real_time_data("AAPL")
 
     # Create candlestick charts for both stock symbols
     fig_amzn = create_candlestick_chart(data_amzn, "Amazon (AMZN)")
@@ -36,12 +35,11 @@ def update_candlestick_charts(n):
 
     return fig_amzn, fig_aapl, alerts
 
-def generate_random_candlestick_data(symbol):
-    # Replace with real-time data retrieval from StockExchange
-    # For demonstration, generate random data
-    # Format: [(timestamp1, open1, high1, low1, close1), (timestamp2, open2, high2, low2, close2), ...]
-    return [(timestamp, random.uniform(100, 500), random.uniform(100, 500),
-             random.uniform(100, 500), random.uniform(100, 500)) for timestamp in range(1, 11)]
+def fetch_real_time_data(stock_exchange):
+     if not stock_exchange.data_queue.empty():
+         data = stock_exchange.data_queue.get()
+         symbol = data.symbol
+         share_price = data['share_price']
 
 def create_candlestick_chart(data, title):
     fig = go.Figure(data=[go.Candlestick(x=[x[0] for x in data],
