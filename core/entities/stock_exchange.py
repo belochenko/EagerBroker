@@ -43,13 +43,6 @@ class StockExchange:
             # Emit share price update every minute
             if elapsed_time >= self.price_broadcast_frequency:
                 print(f"{self.symbol}: Broadcasting share price - ${self.share_price}")
-                # self.data_queue.put(StockExchangeEmitTypeDTO(
-                #     symbol=self.symbol,
-                #     share_price=self.share_price,
-                #     total_shares_sold=self.total_shares_sold,
-                #     total_shares_bought=self.total_shares_bought,
-                #     time_of_emission=time.time()
-                # ))
 
                 self.start_time = current_time
                 
