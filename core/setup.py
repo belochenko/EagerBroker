@@ -1,12 +1,14 @@
 from core.entities.eager_broker import EagerBroker
 from application.services import stock_exchange as se
 
-def setup_stock_exchanges():
+from typing import Tuple
+
+def setup_stock_exchanges() -> Tuple:
     stock_exchange1 = se.stock_exchange1.start()
     stock_exchange2 = se.stock_exchange2.start()
     return stock_exchange1, stock_exchange2
 
-def setup_eager_broker():
+def setup_eager_broker() -> EagerBroker:
     eager_broker = EagerBroker("EagerBroker AMZA and APLE")
     eager_broker.subscribe_to_stock_exchange(se.stock_exchange1)
     eager_broker.subscribe_to_stock_exchange(se.stock_exchange2)

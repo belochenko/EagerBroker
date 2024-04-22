@@ -6,10 +6,11 @@ from typing import Generator
 from queue import Queue
 
 from core.dto.stock_exchange import BroadcastingSharePriceDTO, StockExchangeEmitTypeDTO
+from core.dto.stock_symbol import StockSymbolDTO
 
 
 class StockExchange:
-    def __init__(self, name, symbol):
+    def __init__(self, name: str, symbol: StockSymbolDTO):
         self.name = name
         self.symbol = symbol
         self.share_price = random.uniform(100, 500)  # Initial share price
