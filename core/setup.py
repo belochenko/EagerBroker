@@ -21,9 +21,14 @@ def run():
         data_from_stock_exchange1 = se.stock_exchange1.get_data_from_queue()
         data_from_stock_exchange2 = se.stock_exchange2.get_data_from_queue()
 
-        if data_from_stock_exchange1 is not None or data_from_stock_exchange2 is not None:
-            print(data_from_stock_exchange1, data_from_stock_exchange2)
+        if data_from_stock_exchange1 or data_from_stock_exchange2:
+            print(f"{data_from_stock_exchange1}")
+            print(f"{data_from_stock_exchange2}")
 
         # Make decision based on data from both exchanges
-        eager_broker.make_decision(data_from_stock_exchange1)
-        eager_broker.make_decision(data_from_stock_exchange2)
+        broker_on_stock_exchange1 = eager_broker.make_decision(data_from_stock_exchange1)
+        broker_on_stock_exchange2 = eager_broker.make_decision(data_from_stock_exchange2)
+
+        if broker_on_stock_exchange1 or broker_on_stock_exchange2:
+            print(f'{broker_on_stock_exchange1}')
+            print(f'{broker_on_stock_exchange2}')
