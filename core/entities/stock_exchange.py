@@ -19,6 +19,7 @@ class StockExchange:
         self.share_price_decrease_probability = None  # Probability of share price decrease
         self.update_frequency = 1  # Update frequency in seconds
         self.price_broadcast_frequency = 60  # Share price broadcast frequency in seconds
+        self.start_time = time.time()
 
         self.data_queue = Queue()
         self.running = False
@@ -36,9 +37,22 @@ class StockExchange:
 
     def _generate_random_data(self) -> None:
         while True:
+            current_time = time.time()
+            elapsed_time = current_time - self.start_time
+
             # Emit share price update every minute
-            if time.time() % self.price_broadcast_frequency == 0:
+            if elapsed_time >= self.price_broadcast_frequency:
                 print(f"{self.symbol}: Broadcasting share price - ${self.share_price}")
+                # self.data_queue.put(StockExchangeEmitTypeDTO(
+                #     symbol=self.symbol,
+                #     share_price=self.share_price,
+                #     total_shares_sold=self.total_shares_sold,
+                #     total_shares_bought=self.total_shares_bought,
+                #     time_of_emission=time.time()
+                # ))
+
+                self.start_time = current_time
+                
                 self.data_queue.put(BroadcastingSharePriceDTO(
                     symbol=self.symbol,
                     share_price=self.share_price,
@@ -56,16 +70,12 @@ class StockExchange:
             # Update share price
             self.update_share_price()
 
-            # print(f"{self.symbol}: Share price - ${self.share_price}, "
-            #       f"Total shares sold - {self.total_shares_sold}, "
-            #       f"Total shares bought - {self.total_shares_bought}")
-
             self.data_queue.put(StockExchangeEmitTypeDTO(
                 symbol=self.symbol,
                 share_price=self.share_price,
                 total_shares_sold=self.total_shares_sold,
                 total_shares_bought=self.total_shares_bought,
-                time_of_emition=time.time()
+                time_of_emission=time.time()
             ))
             time.sleep(self.update_frequency)
 

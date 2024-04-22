@@ -1,9 +1,11 @@
 from queue import Queue
+from core.dto.stock_exchange import BroadcastingSharePriceDTO, StockExchangeEmitTypeDTO
 
 from core.entities.stock_exchange import StockExchange
-from core.dto.eager_broker import EagerBrokerDecisionDTO
+from core.dto.eager_broker import EagerBrokerDecisionDTO, BuyAction, SellAction, HoldAction
 
 import threading
+import time
 
 class EagerBroker:
     def __init__(self, name):
@@ -22,13 +24,9 @@ class EagerBroker:
             if stock_exchange_data:
                 self.eager_broker_queue.put(stock_exchange_data)
 
-    def receive_data_update(self, data):
-        # Receive data updates from subscribed stock exchanges
-        for data_queue in self.data_queues:
-            data_queue.put(data)
-
-    def make_decision(self, data):
-        if data:
+    @staticmethod
+    def make_decision(data):
+        if isinstance(data, StockExchangeEmitTypeDTO):
             symbol, share_price, total_shares_sold, total_shares_bought = data
 
             initial_share_price = symbol.initial_price
@@ -37,17 +35,19 @@ class EagerBroker:
             percentage_change = ((share_price - initial_share_price) / initial_share_price) * 100
 
             # Decide whether to buy or sell based on the algorithm
-            decision = ""
+            decision = None
             if total_shares_sold > 2000 and percentage_change < -10:
-                decision = "buy"
+                decision = EagerBrokerDecisionDTO(decision=BuyAction, based_of_data=data, time_of_decision=time.time())
             elif total_shares_bought > 2000 and percentage_change > 10:
-                decision = "sell"
+                decision = EagerBrokerDecisionDTO(decision=SellAction, based_of_data=data, time_of_decision=time.time())
             else:
-                decision = "hold"
+                decision = EagerBrokerDecisionDTO(decision=HoldAction, based_of_data=data, time_of_decision=time.time())
 
-            # Create a tuple containing the decision and the original data
-            decision_data = (decision, data)
+            return decision
+        
+        elif isinstance(data, BroadcastingSharePriceDTO):
+            # Handle BroadcastingSharePriceDTO (emitted every minute)
+            symbol = data.symbol
+            share_price = data.share_price
 
-            print(decision_data)
-            # Put the decision data into the eager_broker_queue
-            self.eager_broker_queue.put(decision_data)
+            print(f"[{time.time()}] {symbol}: Initial Share Price Updated - ${share_price}")

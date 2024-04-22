@@ -17,5 +17,6 @@ class HoldAction:
 
 @dataclass
 class EagerBrokerDecisionDTO:
-    desicion: Union[BuyAction, SellAction, HoldAction]
+    decision: Union[BuyAction, SellAction, HoldAction]
     based_of_data: any
+    time_of_decision: float
