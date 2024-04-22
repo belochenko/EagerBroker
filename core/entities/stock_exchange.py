@@ -7,6 +7,7 @@ from queue import Queue
 
 from core.dto.stock_exchange import BroadcastingSharePriceDTO, StockExchangeEmitTypeDTO
 
+
 class StockExchange:
     def __init__(self, name, symbol):
         self.name = name
@@ -40,7 +41,9 @@ class StockExchange:
                 print(f"{self.symbol}: Broadcasting share price - ${self.share_price}")
                 self.data_queue.put(BroadcastingSharePriceDTO(
                     symbol=self.symbol,
-                    share_price=self.share_price)
+                    share_price=self.share_price,
+                    time_of_broadcasting=time.time()
+                    )
                 )
 
             # Generate random share sales or purchases every second
@@ -61,7 +64,8 @@ class StockExchange:
                 symbol=self.symbol,
                 share_price=self.share_price,
                 total_shares_sold=self.total_shares_sold,
-                total_shares_bought=self.total_shares_bought
+                total_shares_bought=self.total_shares_bought,
+                time_of_emition=time.time()
             ))
             time.sleep(self.update_frequency)
 
