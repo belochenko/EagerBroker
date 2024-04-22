@@ -4,11 +4,12 @@ from core.dto.stock_exchange import BroadcastingSharePriceDTO, StockExchangeEmit
 from core.entities.stock_exchange import StockExchange
 from core.dto.eager_broker import EagerBrokerDecisionDTO, BuyAction, SellAction, HoldAction
 
+from typing import Union
 import threading
 import time
 
 class EagerBroker:
-    def __init__(self, name):
+    def __init__(self, name: str):
         self.name = name
         self.eager_broker_queue = Queue()
 
@@ -25,7 +26,7 @@ class EagerBroker:
                 self.eager_broker_queue.put(stock_exchange_data)
 
     @staticmethod
-    def make_decision(data):
+    def make_decision(data: Union[StockExchangeEmitTypeDTO, BroadcastingSharePriceDTO]) -> EagerBrokerDecisionDTO:
         if isinstance(data, StockExchangeEmitTypeDTO):
             symbol, share_price, total_shares_sold, total_shares_bought = data
 
