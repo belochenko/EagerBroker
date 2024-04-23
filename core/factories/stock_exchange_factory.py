@@ -1,9 +1,10 @@
+from typing import List
 from core.entities.stock_exchange import StockExchange
 from core.factories.stock_symbol_factory import StockSymbolFactory
 
 class StockExchangeFactory:
     @staticmethod
-    def create_stock_exchanges(stock_exchange_data):
+    def create_stock_exchanges(stock_exchange_data) -> List[StockExchange]:
         """
         Create multiple StockExchange instances based on the provided data.
         """

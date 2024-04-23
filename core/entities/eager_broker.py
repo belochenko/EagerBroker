@@ -8,6 +8,7 @@ from typing import Union
 import threading
 import time
 
+
 class EagerBroker:
     def __init__(self, name: str):
         self.name = name
@@ -28,18 +29,21 @@ class EagerBroker:
     @staticmethod
     def make_decision(data: Union[StockExchangeEmitTypeDTO, BroadcastingSharePriceDTO]) -> EagerBrokerDecisionDTO:
         if isinstance(data, StockExchangeEmitTypeDTO):
-            symbol, share_price, total_shares_sold, total_shares_bought = data
-
+            symbol, curr_share_price, total_shares_sold, total_shares_bought = data
+            
             initial_share_price = symbol.initial_price
 
             # Calculate the percentage change in share price
-            percentage_change = ((share_price - initial_share_price) / initial_share_price) * 100
+            percentage_change = int(((curr_share_price - initial_share_price) / initial_share_price) * 100)
 
             # Decide whether to buy or sell based on the algorithm
             decision = None
-            if total_shares_sold > 2000 and percentage_change < -10:
+            if (total_shares_bought + total_shares_sold) < -2000 and percentage_change < -10:
                 decision = EagerBrokerDecisionDTO(decision=DecisionType.BUY, based_of_data=data, time_of_decision=time.time())
-            elif total_shares_bought > 2000 and percentage_change > 10:
+            # if the overall number of shares since the last share price update exceeds a total of 2K shares bought, 
+            # Eagy Broker will suggest to sell a given share, as long as the current share price is at least 10% higher 
+            # than the initial share price.
+            elif (total_shares_sold + total_shares_bought) > 2000 and percentage_change > 10:
                 decision = EagerBrokerDecisionDTO(decision=DecisionType.SELL, based_of_data=data, time_of_decision=time.time())
             else:
                 decision = EagerBrokerDecisionDTO(decision=DecisionType.HOLD, based_of_data=data, time_of_decision=time.time())

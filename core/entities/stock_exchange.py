@@ -29,14 +29,16 @@ class StockExchange:
     def _update_share_price(self):
         with self.lock:
             # Calculate probability of share price increase (p(I)) and decrease (p(D))
-            self.share_price_increase_probability = self.total_shares_sold / (self.total_shares_bought + self.total_shares_sold)
-            self.share_price_decrease_probability = self.total_shares_bought / (self.total_shares_bought + self.total_shares_sold)
+            self.share_price_increase_probability = int((self.total_shares_sold / (self.total_shares_bought + self.total_shares_sold)) * 100)
+            self.share_price_decrease_probability = int((self.total_shares_bought / (self.total_shares_bought + self.total_shares_sold)) * 100)
 
             # Update share price based on probabilities
-            if random.random() < self.share_price_increase_probability:
+            if random.randint(0, 100) < self.share_price_increase_probability:
                 self.share_price *= 1.1  # Increase share price by 10%
-            elif random.random() < self.share_price_increase_probability:
+                self.share_price = round(self.share_price, 2)
+            else:
                 self.share_price *= 0.9  # Decrease share price by 10%
+                self.share_price = round(self.share_price, 2)
     
     # Share price broadcast frequency in seconds
     @timer_tool.set_interval(60)
@@ -51,22 +53,22 @@ class StockExchange:
 
      # Update frequency in seconds
     @timer_tool.set_interval(1)
-    def _stock_share_price_emission(self) -> None:
-            # Generate random share sales or purchases every second
+    def _stock_share_price_emission(self):
+        # Generate random share sales or purchases every second
             share_change = int(random.uniform(1, 1000))
-
             # Define weights for buying and selling shares
             weights = [0.5, 0.5]  # 50% chance for buying and 50% chance for selling
-
             # Choose randomly based on weights
+            # More control than random.random() < 0.5
             is_selling = random.choices([True, False], weights=weights)
-            if is_selling: # More control than random.random() < 0.5:
-                self.total_shares_sold += share_change
+            if is_selling: 
+                self.total_shares_sold -= share_change
             else:
                 self.total_shares_bought += share_change
+
             # Update share price
             self._update_share_price()
-
+            
             with self.lock:
                 self.data_queue.put(StockExchangeEmitTypeDTO(
                     symbol=self.symbol,
