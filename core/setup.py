@@ -1,27 +1,40 @@
 from core.entities.eager_broker import EagerBroker
-from application.services import stock_exchange as se
+from core.entities.stock_exchange import StockExchange
+from core.factories.stock_exchange_factory import StockExchangeFactory
 
 from typing import Tuple
 
-def setup_stock_exchanges() -> Tuple:
-    stock_exchange1 = se.stock_exchange1.start()
-    stock_exchange2 = se.stock_exchange2.start()
-    return stock_exchange1, stock_exchange2
+def setup_stock_exchanges(stock_exchange_data) -> Tuple[StockExchange]:
+    """
+    Setup and start the stock exchanges based on the provided data.
+    """
+    stock_exchanges = StockExchangeFactory.create_stock_exchanges(stock_exchange_data)
+    for exchange in stock_exchanges:
+        exchange.start()
+    return tuple(stock_exchanges)
 
-def setup_eager_broker() -> EagerBroker:
+def setup_eager_broker(stock_exchanges) -> EagerBroker:
+    """
+    Setup the EagerBroker and subscribe to the provided stock exchanges.
+    """
     eager_broker = EagerBroker("EagerBroker AMZA and APLE")
-    eager_broker.subscribe_to_stock_exchange(se.stock_exchange1)
-    eager_broker.subscribe_to_stock_exchange(se.stock_exchange2)
+    for exchange in stock_exchanges:
+        eager_broker.subscribe_to_stock_exchange(exchange)
     return eager_broker
 
 def run():
-    stock_exchange1, stock_exchange2 = setup_stock_exchanges()
-    eager_broker = setup_eager_broker()
+    # Setup stock exchanges
+    stock_exchanges = setup_stock_exchanges({
+        "StockExchange1": ('AAPLE', 'Apple', 100.0),
+        "StockExchange2": ('AMZN', 'Amazon', 120.0)
+    })
 
-    print('Here will be data')
+    # Setup EagerBroker
+    eager_broker = setup_eager_broker(stock_exchanges)
+
     while True:
-        data_from_stock_exchange1 = se.stock_exchange1.get_data_from_queue()
-        data_from_stock_exchange2 = se.stock_exchange2.get_data_from_queue()
+        data_from_stock_exchange1 = stock_exchanges[0].get_data_from_queue()
+        data_from_stock_exchange2 = stock_exchanges[1].get_data_from_queue()
 
         if data_from_stock_exchange1 or data_from_stock_exchange2:
             print(f"{data_from_stock_exchange1}")

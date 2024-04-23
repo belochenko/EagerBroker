@@ -2,7 +2,7 @@ from queue import Queue
 from core.dto.stock_exchange import BroadcastingSharePriceDTO, StockExchangeEmitTypeDTO
 
 from core.entities.stock_exchange import StockExchange
-from core.dto.eager_broker import EagerBrokerDecisionDTO, BuyAction, SellAction, HoldAction
+from core.dto.eager_broker import EagerBrokerDecisionDTO, DecisionType
 
 from typing import Union
 import threading
@@ -38,11 +38,11 @@ class EagerBroker:
             # Decide whether to buy or sell based on the algorithm
             decision = None
             if total_shares_sold > 2000 and percentage_change < -10:
-                decision = EagerBrokerDecisionDTO(decision=BuyAction, based_of_data=data, time_of_decision=time.time())
+                decision = EagerBrokerDecisionDTO(decision=DecisionType.BUY, based_of_data=data, time_of_decision=time.time())
             elif total_shares_bought > 2000 and percentage_change > 10:
-                decision = EagerBrokerDecisionDTO(decision=SellAction, based_of_data=data, time_of_decision=time.time())
+                decision = EagerBrokerDecisionDTO(decision=DecisionType.SELL, based_of_data=data, time_of_decision=time.time())
             else:
-                decision = EagerBrokerDecisionDTO(decision=HoldAction, based_of_data=data, time_of_decision=time.time())
+                decision = EagerBrokerDecisionDTO(decision=DecisionType.HOLD, based_of_data=data, time_of_decision=time.time())
 
             return decision
         
@@ -50,5 +50,3 @@ class EagerBroker:
             # Handle BroadcastingSharePriceDTO (emitted every minute)
             symbol = data.symbol
             share_price = data.share_price
-
-            print(f"[{time.time()}] {symbol}: Initial Share Price Updated - ${share_price}")

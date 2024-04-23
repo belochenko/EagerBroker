@@ -1,22 +1,15 @@
 from dataclasses import dataclass
 from typing import Union
 
-@dataclass
-class BuyAction:
-    pass
+from enum import Enum
 
-
-@dataclass
-class SellAction:
-    pass
-
-
-@dataclass
-class HoldAction:
-    pass
+class DecisionType(Enum):
+    BUY = "ActionToBuy"
+    SELL = "ActionToSell"
+    HOLD = "ActionToHold"
 
 @dataclass
 class EagerBrokerDecisionDTO:
-    decision: Union[BuyAction, SellAction, HoldAction]
+    decision: DecisionType
     based_of_data: any
     time_of_decision: float
