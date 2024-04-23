@@ -8,7 +8,6 @@ from typing import Union
 import threading
 import time
 
-
 class EagerBroker:
     def __init__(self, name: str):
         self.name = name

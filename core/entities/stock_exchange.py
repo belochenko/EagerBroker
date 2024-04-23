@@ -82,7 +82,7 @@ class StockExchange:
         if not self.data_queue.empty():
             return self.data_queue.get()
         return None
-
+      
     def start(self):
         self.running = True
         threading.Thread(target=self._broadcast_share_price, daemon=True).start()
