@@ -76,8 +76,8 @@ The project structure is organized as follows:
 - [x] Create functions to generate random share sales or purchases
 - [x] Define a method for updating share prices based on transactions
 - [x] Implement logic to handle updates for both Amazon (AMZN) and Apple (AAPL) shares separately
-- [ ] Write unit tests to ensure correctness of implementation
-- [ ] Document the code and provide clear instructions for usage
+- [x] Write unit tests to ensure correctness of implementation
+- [x] Document the code and provide clear instructions for usage
 - [ ] Optimize the code for efficiency and readability
 
 ## Usage
