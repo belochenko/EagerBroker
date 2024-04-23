@@ -1,6 +1,6 @@
 # Eager Broker Project
 
-This project implements the Eager Broker, a system for making buy/sell decisions in the stock market based on predefined conditions.
+This project implements the Eager Broker, a system for making buy/sell decisions in the stock market based on predefined conditions. To correctly simulate the entire system develop Stock Exchange.
 
 # Considerations and Approach
 
